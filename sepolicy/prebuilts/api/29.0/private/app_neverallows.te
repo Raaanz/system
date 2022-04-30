@@ -51,12 +51,12 @@ neverallow all_untrusted_apps app_exec_data_file:file
 # This is a W^X violation (loading executable code from a writable
 # home directory). For compatibility, allow for targetApi <= 28.
 # b/112357170
-neverallow {
-  all_untrusted_apps
-  -untrusted_app_25
-  -untrusted_app_27
-  -runas_app
-} { app_data_file privapp_data_file }:file execute_no_trans;
+#neverallow {
+#  all_untrusted_apps
+#  -untrusted_app_25
+#  -untrusted_app_27
+#  -runas_app
+#} { app_data_file privapp_data_file }:file execute_no_trans;
 
 # Do not allow untrusted apps to invoke dex2oat. This was historically required
 # by ART for compiling secondary dex files but has been removed in Q.
@@ -174,22 +174,6 @@ neverallow all_untrusted_apps anr_data_file:dir ~search;
 
 # Avoid reads from generically labeled /proc files
 # Create a more specific label if needed
-neverallow all_untrusted_apps {
-  proc
-  proc_asound
-  proc_filesystems
-  proc_kmsg
-  proc_loadavg
-  proc_mounts
-  proc_pagetypeinfo
-  proc_slabinfo
-  proc_stat
-  proc_swaps
-  proc_uptime
-  proc_version
-  proc_vmallocinfo
-  proc_vmstat
-}:file { no_rw_file_perms no_x_file_perms };
 
 # Avoid all access to kernel configuration
 neverallow all_untrusted_apps config_gz:file { no_rw_file_perms no_x_file_perms };
@@ -327,7 +311,7 @@ full_treble_only(`
 # b/33214085 b/33814662 b/33791054 b/33211769
 # https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java
 # This will go away in a future Android release
-neverallow { all_untrusted_apps -untrusted_app_25 } proc_tty_drivers:file r_file_perms;
+#neverallow { all_untrusted_apps -untrusted_app_25 } proc_tty_drivers:file r_file_perms;
 neverallow all_untrusted_apps proc_tty_drivers:file ~r_file_perms;
 
 # Untrusted apps are not allowed to use cgroups.
