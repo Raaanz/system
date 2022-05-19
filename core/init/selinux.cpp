@@ -274,7 +274,6 @@ constexpr const char plat_policy_cil_file[] = "/system/etc/selinux/plat_sepolicy
 
 bool IsSplitPolicyDevice() {
     return access(plat_policy_cil_file, R_OK) != -1;
-    //return false;
 }
 
 bool LoadSplitPolicy() {

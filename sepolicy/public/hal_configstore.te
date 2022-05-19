@@ -37,13 +37,13 @@ neverallow hal_configstore_server {
 }:{ unix_dgram_socket unix_stream_socket } *;
 
 # Should never need access to anything on /data
-#neverallow hal_configstore_server {
-#  data_file_type
-#  -anr_data_file # for crash dump collection
-#  -tombstone_data_file # for crash dump collection
-#  -zoneinfo_data_file # granted to domain
-#  with_native_coverage(`-method_trace_data_file')
-#}:{ file fifo_file sock_file } *;
+neverallow hal_configstore_server {
+  data_file_type
+  -anr_data_file # for crash dump collection
+  -tombstone_data_file # for crash dump collection
+  -zoneinfo_data_file # granted to domain
+  with_native_coverage(`-method_trace_data_file')
+}:{ file fifo_file sock_file } *;
 
 # Should never need sdcard access
 neverallow hal_configstore_server {

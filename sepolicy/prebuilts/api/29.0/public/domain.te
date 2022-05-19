@@ -368,14 +368,14 @@ neverallow * self:global_capability2_class_set mac_admin;
 
 # Once the policy has been loaded there shall be none to modify the policy.
 # It is sealed.
-#neverallow * kernel:security load_policy;
+neverallow * kernel:security load_policy;
 
 # Only init prior to switching context should be able to set enforcing mode.
 # init starts in kernel domain and switches to init domain via setcon in
 # the init.rc, so the setenforce occurs while still in kernel. After
 # switching domains, there is never any need to setenforce again by init.
-#neverallow * kernel:security setenforce;
-#neverallow { domain -kernel } kernel:security setcheckreqprot;
+neverallow * kernel:security setenforce;
+neverallow { domain -kernel } kernel:security setcheckreqprot;
 
 # No booleans in AOSP policy, so no need to ever set them.
 neverallow * kernel:security setbool;
@@ -424,7 +424,7 @@ neverallow { domain -init -vendor_init } proc_security:file { append open read w
 # Nobody is allowed to make binder calls into init.
 # Only servicemanager may transfer binder references to init
 # vendor_init shouldn't use binder at all.
-# neverallow * init:binder ~{ transfer };
+neverallow * init:binder ~{ transfer };
 neverallow { domain -servicemanager } init:binder { transfer };
 neverallow * vendor_init:binder *;
 
@@ -524,45 +524,45 @@ neverallow * hidl_base_hwservice:hwservice_manager find;
 neverallow { domain -init -vendor_init } default_prop:property_service set;
 neverallow { domain -init -vendor_init } mmc_prop:property_service set;
 
-#compatible_property_only(`
-#    neverallow { domain -init } default_prop:property_service set;
-#    neverallow { domain -init } mmc_prop:property_service set;
-#    neverallow { domain -init -vendor_init } exported_default_prop:property_service set;
-#    neverallow { domain -init } exported_secure_prop:property_service set;
-#    neverallow { domain -init } exported2_default_prop:property_service set;
-#    neverallow { domain -init -vendor_init } exported3_default_prop:property_service set;
-#    neverallow { domain -init -vendor_init } vendor_default_prop:property_service set;
-#')
+compatible_property_only(`
+    neverallow { domain -init } default_prop:property_service set;
+    neverallow { domain -init } mmc_prop:property_service set;
+    neverallow { domain -init -vendor_init } exported_default_prop:property_service set;
+    neverallow { domain -init } exported_secure_prop:property_service set;
+    neverallow { domain -init } exported2_default_prop:property_service set;
+    neverallow { domain -init -vendor_init } exported3_default_prop:property_service set;
+    neverallow { domain -init -vendor_init } vendor_default_prop:property_service set;
+')
 
 # Only core domains are allowed to access package_manager properties
 neverallow { domain -init -system_server } pm_prop:property_service set;
-# neverallow { domain -coredomain } pm_prop:file no_rw_file_perms;
+neverallow { domain -coredomain } pm_prop:file no_rw_file_perms;
 
-#compatible_property_only(`
-#    neverallow { domain -init -system_server -vendor_init } exported_pm_prop:property_service set;
-#    neverallow { domain -coredomain -vendor_init } exported_pm_prop:file no_rw_file_perms;
-#')
+compatible_property_only(`
+    neverallow { domain -init -system_server -vendor_init } exported_pm_prop:property_service set;
+    neverallow { domain -coredomain -vendor_init } exported_pm_prop:file no_rw_file_perms;
+')
 
 # Do not allow reading device's serial number from system properties except form
 # a few whitelisted domains.
-#neverallow {
-#  domain
-#  -adbd
-#  -dumpstate
-#  -fastbootd
-#  -hal_camera_server
-#  -hal_cas_server
-#  -hal_drm_server
-#  -init
-#  -mediadrmserver
-#  -recovery
-#  -shell
-#  -system_server
-#  -vendor_init
-#} serialno_prop:file r_file_perms;
+neverallow {
+  domain
+  -adbd
+  -dumpstate
+  -fastbootd
+  -hal_camera_server
+  -hal_cas_server
+  -hal_drm_server
+  -init
+  -mediadrmserver
+  -recovery
+  -shell
+  -system_server
+  -vendor_init
+} serialno_prop:file r_file_perms;
 
 # Do not allow reading the last boot timestamp from system properties
-# neverallow { domain -init -system_server -dumpstate } firstboot_prop:file r_file_perms;
+neverallow { domain -init -system_server -dumpstate } firstboot_prop:file r_file_perms;
 
 neverallow {
   domain
@@ -719,17 +719,17 @@ full_treble_only(`
   # to obtain an already established socket via some public/official/stable API and then exchange
   # data with its peer over that socket. The wire format in this scenario is dicatated by the API
   # and thus does not break the core-vendor separation.
-#full_treble_only(`
-#  neverallow_establish_socket_comms({
-#    coredomain
-#    -init
-#    -adbd
-#  }, {
-#    domain
-#    -coredomain
-#    -socket_between_core_and_vendor_violators
-#  });
-#')
+full_treble_only(`
+  neverallow_establish_socket_comms({
+    coredomain
+    -init
+    -adbd
+  }, {
+    domain
+    -coredomain
+    -socket_between_core_and_vendor_violators
+  });
+')
   # Vendor domains are not permitted to initiate communications to core domain sockets
 full_treble_only(`
   neverallow_establish_socket_comms({
@@ -1364,13 +1364,13 @@ userdebug_or_eng(`
 ')
 
 # Platform must not have access to /mnt/vendor.
-#neverallow {
-#  coredomain
-#  -init
-#  -ueventd
-#  -vold
-#  -system_writes_mnt_vendor_violators
-#} mnt_vendor_file:dir *;
+neverallow {
+  coredomain
+  -init
+  -ueventd
+  -vold
+  -system_writes_mnt_vendor_violators
+} mnt_vendor_file:dir *;
 
 # Only apps are allowed access to vendor public libraries.
 full_treble_only(`
@@ -1387,21 +1387,21 @@ neverallow {
 } mnt_product_file:dir *;
 
 # Platform must not have access to sysfs_batteryinfo, but should do it via health HAL and healthd
-#full_treble_only(`
-#  neverallow {
-#    coredomain
-#    -healthd
-#    -shell
-#    # Generate uevents for health info
-#    -ueventd
-#    # Recovery uses health HAL passthrough implementation.
-#    -recovery
-#    # Charger uses health HAL passthrough implementation.
-#    -charger
-#    # TODO(b/110891300): remove this exception
-#    -incidentd
-#  } sysfs_batteryinfo:file { open read };
-#')
+full_treble_only(`
+  neverallow {
+    coredomain
+    -healthd
+    -shell
+    # Generate uevents for health info
+    -ueventd
+    # Recovery uses health HAL passthrough implementation.
+    -recovery
+    # Charger uses health HAL passthrough implementation.
+    -charger
+    # TODO(b/110891300): remove this exception
+    -incidentd
+  } sysfs_batteryinfo:file { open read };
+')
 
 neverallow {
   domain

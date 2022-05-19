@@ -5,12 +5,12 @@ type vendor_toolbox_exec, exec_type, vendor_file_type, file_type;
 
 # Do not allow domains to transition to vendor toolbox
 # or read, execute the vendor_toolbox file.
-#full_treble_only(`
-#    # Do not allow non-vendor domains to transition
-#    # to vendor toolbox except for the whitelisted domains.
-#    neverallow {
-#        coredomain
-#        -init
-#        -modprobe
-#    } vendor_toolbox_exec:file { entrypoint execute execute_no_trans };
-#')
+full_treble_only(`
+    # Do not allow non-vendor domains to transition
+    # to vendor toolbox except for the whitelisted domains.
+    neverallow {
+        coredomain
+        -init
+        -modprobe
+    } vendor_toolbox_exec:file { entrypoint execute execute_no_trans };
+')

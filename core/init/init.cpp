@@ -421,11 +421,6 @@ static void export_kernel_boot_props() {
         { "ro.boot.revision",   "ro.revision",   "0", },
     };
     for (const auto& prop : prop_map) {
-        if(access("/.cell", F_OK) == 0){
-            if(strncmp("ro.boot.serialno", prop.src_prop, 16) == 0)
-                continue;
-        }
-
         std::string value = GetProperty(prop.src_prop, prop.default_value);
         if (value != UNSET)
             property_set(prop.dst_prop, value);
